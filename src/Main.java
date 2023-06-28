@@ -1,4 +1,6 @@
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -37,49 +39,30 @@ public class Main {
         zippedStream.forEach(System.out::println);
     }
 
-    public Map<Integer,String> firstTask(List<String> names){
-        Map<Integer,String> newNames = new HashMap<Integer,String>();
-        for (int i = 0; i < names.size(); i++) {
-            if (i % 2 == 0) {
-                continue;
-            }
-            newNames.put(i, names.get(i));
-        }
-
-        return newNames;
+    public Map<Integer, String> firstTask(List<String> names) {
+        return IntStream.range(0, names.size())
+                .filter(i -> i % 2 != 0)
+                .boxed()
+                .collect(Collectors.toMap(i -> i, names::get));
     }
 
-    public List<String> secondTask(List<String> names){
-        for(int i = 0; i < names.size(); i++) {
-            names.set(i, names.get(i).toUpperCase());
-        }
-        Collections.sort(names, Collections.reverseOrder());
-        return names;
+    public List<String> secondTask(List<String> names) {
+        return names.stream()
+                .map(String::toUpperCase)
+                .sorted(Collections.reverseOrder())
+                .collect(Collectors.toList());
     }
 
-    public String thirdTask(String[] array){
+    public String thirdTask(String[] array) {
+        List<Integer> numbers = Arrays.stream(array)
+                .flatMap(s -> Arrays.stream(s.split(", ")))
+                .map(Integer::parseInt)
+                .sorted()
+                .collect(Collectors.toList());
 
-
-        List<Integer> numbers = new ArrayList<>();
-
-        for (String item : array) {
-            String[] nums = item.split(", ");
-            for (String num : nums) {
-                numbers.add(Integer.parseInt(num));
-            }
-        }
-
-        Collections.sort(numbers);
-
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < numbers.size(); i++) {
-            if (i != 0) {
-                result.append(", ");
-            }
-            result.append(numbers.get(i));
-        }
-
-        return result.toString();
+        return numbers.stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(", "));
     }
 
     public static Stream<Long> forthTask(long seed, long a, long c, long m) {
