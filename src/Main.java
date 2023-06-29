@@ -66,29 +66,14 @@ public class Main {
     }
 
     public static <T> Stream<T> zip(Stream<T> first, Stream<T> second) {
-        Iterator<T> iterator1 = first.iterator();
-        Iterator<T> iterator2 = second.iterator();
-
-        Iterator<T> zippedIterator = new Iterator<T>() {
-            @Override
-            public boolean hasNext() {
-                return iterator1.hasNext() || iterator2.hasNext();
-            }
-
-            @Override
-            public T next() {
-                if (iterator1.hasNext()) {
-                    return iterator1.next();
-                } else if (iterator2.hasNext()) {
-                    return iterator2.next();
-                } else {
-                    throw new IllegalStateException("No more elements in the streams.");
-                }
-            }
-        };
-
-        Spliterator<T> spliterator = Spliterators.spliteratorUnknownSize(zippedIterator, Spliterator.ORDERED);
-
-        return StreamSupport.stream(spliterator, false);
+        Iterator<T> iteratorFirst = first.iterator();
+        Iterator<T> iteratorSecond = second.iterator();
+        List<T> result = new ArrayList<>();
+        while (iteratorFirst.hasNext() && iteratorSecond.hasNext()) {
+            result.add(iteratorFirst.next());
+            result.add(iteratorSecond.next());
+        }
+        Collections.shuffle(result);
+        return result.stream();
     }
 }
