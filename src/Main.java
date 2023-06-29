@@ -54,14 +54,10 @@ public class Main {
     }
 
     public String thirdTask(String[] array) {
-        List<Integer> numbers = Arrays.stream(array)
+        return Arrays.stream(array)
                 .flatMap(s -> Arrays.stream(s.split(", ")))
                 .map(Integer::parseInt)
-                .sorted()
-                .collect(Collectors.toList());
-
-        return numbers.stream()
-                .map(Object::toString)
+                .sorted().map(Objects::toString)
                 .collect(Collectors.joining(", "));
     }
 
@@ -69,22 +65,25 @@ public class Main {
         return Stream.iterate(seed, n -> (a * n + c) % m);
     }
 
-    public static <T> Stream<T> zip(Stream<T> first, Stream<T> second){
+    public static <T> Stream<T> zip(Stream<T> first, Stream<T> second) {
         Iterator<T> iterator1 = first.iterator();
         Iterator<T> iterator2 = second.iterator();
 
         Iterator<T> zippedIterator = new Iterator<T>() {
             @Override
             public boolean hasNext() {
-                return iterator1.hasNext() && iterator2.hasNext();
+                return iterator1.hasNext() || iterator2.hasNext();
             }
 
             @Override
             public T next() {
-                if (!hasNext()) {
+                if (iterator1.hasNext()) {
+                    return iterator1.next();
+                } else if (iterator2.hasNext()) {
+                    return iterator2.next();
+                } else {
                     throw new IllegalStateException("No more elements in the streams.");
                 }
-                return iterator1.next();
             }
         };
 
